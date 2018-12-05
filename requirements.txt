@@ -1,0 +1,7 @@
+dash
+dash-html-components
+dash-core-components
+gunicorn
+Flask
+perspective-dash-component
+pyEX
