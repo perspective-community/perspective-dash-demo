@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import flask
+import functools
 import dash
 import pyEX as p
+import json
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
@@ -29,20 +31,24 @@ app.layout = html.Div(children=[
            'flex-direction': 'column'})
 
 
+@functools.lru_cache(100)
+def fetch_data(value):
+    return p.chartDF(value, '6m')
+
+
 @app.callback(Output('intermediate-value', 'children'), [Input('tickerinput', 'value')])
 def fetch_new_data(value):
-    df = p.chartDF(value, '6m')
-    return df.to_dict(orient='records')
+    return fetch_data(value).to_json(orient='records')
 
 
 @app.callback(Output('psp1', 'value'), [Input('intermediate-value', 'children')])
 def update_psp1(value):
-    return value
+    return json.loads(value)
 
 
 @app.callback(Output('psp2', 'value'), [Input('intermediate-value', 'children')])
 def update_psp2(value):
-    return value
+    return json.loads(value)
 
 if __name__ == "__main__":
     port = os.environ.get('PORT')
