@@ -4,6 +4,6 @@ dash-core-components
 gunicorn
 Flask
 perspective-dash-component>=0.0.4
-perspective-python
+perspective-python>=0.1.2
 pyEX
 pyEX-studies
