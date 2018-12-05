@@ -21,6 +21,7 @@ app.layout = html.Div(children=[
     dcc.Dropdown(id='tickerinput', value='JPM', options=[{'label': s['symbol'] + ' - ' + s['name'], 'value': s['symbol']} for s in symbols]),
     perspective_dash(id='psp1', value=default_data, view='y_line', columns=['open', 'high', 'low', 'close']),
     perspective_dash(id='psp2', value=default_data),
+    html.Div(id='intermediate-value', style={'display': 'none'})
     ],
     style={'height': '100%',
            'width': '100%',
@@ -28,19 +29,20 @@ app.layout = html.Div(children=[
            'flex-direction': 'column'})
 
 
-@app.callback(Output('psp1', 'value'),
-              [Input('tickerinput', 'value')])
+@app.callback(Output('intermediate-value', 'children'), [Input('tickerinput', 'value')])
+def fetch_new_data(value):
+    df = p.chartDF(value, '6m')
+    return df.to_dict(orient='records')
+
+
+@app.callback(Output('psp1', 'value'), [Input('intermediate-value', 'children')])
 def update_psp1(value):
-    df = p.chartDF(value, '6m')
-    return df.to_dict(orient='records')
+    return value
 
 
-@app.callback(Output('psp2', 'value'),
-              [Input('tickerinput', 'value')])
+@app.callback(Output('psp2', 'value'), [Input('intermediate-value', 'children')])
 def update_psp2(value):
-    df = p.chartDF(value, '6m')
-    return df.to_dict(orient='records')
-
+    return value
 
 if __name__ == "__main__":
     port = os.environ.get('PORT')
