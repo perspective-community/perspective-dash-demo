@@ -8,7 +8,7 @@ import json
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
-from perspective_dash_component import perspective_dash
+from perspective_dash_component import PerspectiveDash
 
 # Default data
 symbols = p.symbols()
@@ -21,8 +21,8 @@ app = dash.Dash(__name__, server=server)
 app.layout = html.Div(children=[
     html.H1(children='Perspective Demo', style={'textAlign': 'center'}),
     dcc.Dropdown(id='tickerinput', value='JPM', options=[{'label': s['symbol'] + ' - ' + s['name'], 'value': s['symbol']} for s in symbols]),
-    perspective_dash(id='psp1', value=default_data, view='y_line', columns=['open', 'high', 'low', 'close']),
-    perspective_dash(id='psp2', value=default_data),
+    PerspectiveDash(id='psp1', data=default_data, view='y_line', columns=['open', 'high', 'low', 'close']),
+    PerspectiveDash(id='psp2', data=default_data),
     html.Div(id='intermediate-value', style={'display': 'none'})
     ],
     style={'height': '100%',
@@ -41,12 +41,12 @@ def fetch_new_data(value):
     return fetch_data(value).to_json(orient='records')
 
 
-@app.callback(Output('psp1', 'value'), [Input('intermediate-value', 'children')])
+@app.callback(Output('psp1', 'data'), [Input('intermediate-value', 'children')])
 def update_psp1(value):
     return json.loads(value)
 
 
-@app.callback(Output('psp2', 'value'), [Input('intermediate-value', 'children')])
+@app.callback(Output('psp2', 'data'), [Input('intermediate-value', 'children')])
 def update_psp2(value):
     return json.loads(value)
 
