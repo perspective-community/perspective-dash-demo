@@ -3,4 +3,4 @@ Flask>=1.0.2
 gunicorn>=19.9.0
 perspective-dash-component>=0.0.7
 perspective-python>=0.1.9
-pyEX>=0.1.14
+pyEX>=0.1.13
