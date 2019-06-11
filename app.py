@@ -3,7 +3,7 @@ import os
 import flask
 import functools
 import dash
-import pyEX as p
+import pyEX.client as p
 import json
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
