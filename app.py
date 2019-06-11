@@ -11,24 +11,26 @@ import dash_core_components as dcc
 import dash_html_components as html
 from perspective_dash_component import PerspectiveDash
 
+c = p.Client()
+
 
 ################################
 # Helpers to cache data lookup #
 @functools.lru_cache(100)
 def fetch_data(value):
-    return p.chartDF(value, '6m').to_dict(orient='records')
+    return c.chartDF(value, '6m').to_dict(orient='records')
 
 
 @functools.lru_cache(100)
 def fetch_corr_data(value):
-    df = ps.peerCorrelation(value)
+    df = ps.peerCorrelation(c, value)
     df.index.name = 'symbols'
     return df.index.tolist(), df.reset_index().to_dict(orient='records')
 ################################
 
 ################
 # Default data #
-symbols = p.symbols()
+symbols = c.symbols()
 default_data = fetch_data('JPM')
 default_data2 = fetch_corr_data('JPM')
 default_data2cols, default_data2data = default_data2
