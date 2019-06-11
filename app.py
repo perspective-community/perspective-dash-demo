@@ -4,7 +4,6 @@ import flask
 import functools
 import dash
 import pyEX as p
-import pyEXstudies as ps
 import json
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
@@ -12,6 +11,15 @@ import dash_html_components as html
 from perspective_dash_component import PerspectiveDash
 
 c = p.Client()
+
+
+def peerCorrelation(client, symbol, timeframe='6m'):
+    peers = client.peers(symbol)
+    rets = client.batchDF(peers + [symbol], 'chart', timeframe)['chart']
+    ret = rets.pivot(columns='symbol', values='changePercent').corr()
+    ret.index.name = 'symbol'
+    ret.columns = ret.columns.tolist()
+    return ret
 
 
 ################################
@@ -23,7 +31,7 @@ def fetch_data(value):
 
 @functools.lru_cache(100)
 def fetch_corr_data(value):
-    df = ps.peerCorrelation(c, value)
+    df = peerCorrelation(c, value)
     df.index.name = 'symbols'
     return df.index.tolist(), df.reset_index().to_dict(orient='records')
 ################################
